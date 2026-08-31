@@ -13,10 +13,6 @@
     },
     "principalName": {
       "value": "${AZURE_PRINCIPAL_NAME}"
-    },
-    "clientIpAddress": {
-      "value": "${AZURE_CLIENT_IP}"
     }
   }
 }
-

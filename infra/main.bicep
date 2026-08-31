@@ -12,9 +12,6 @@ param principalId string
 @description('Display name or UPN of the Microsoft Entra administrator.')
 param principalName string
 
-@description('Optional single IPv4 address allowed to connect. Leave empty to disable public access.')
-param clientIpAddress string = ''
-
 var resourceSuffix = take(uniqueString(subscription().id, environmentName, location), 6)
 var tags = {
   'azd-env-name': environmentName
@@ -36,11 +33,9 @@ module sql './modules/sql.bicep' = {
     tags: tags
     principalId: principalId
     principalName: principalName
-    clientIpAddress: clientIpAddress
   }
 }
 
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 output AZURE_SQL_SERVER string = sql.outputs.serverFqdn
 output AZURE_SQL_DATABASE string = sql.outputs.databaseName
-

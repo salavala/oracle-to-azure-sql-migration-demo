@@ -1,6 +1,6 @@
 # Azure Deployment Plan
 
-> **Status:** Validated
+> **Status:** Deployed
 
 Generated: 2026-08-31
 
@@ -25,8 +25,8 @@ migration demo that adds a custom mapping assessment for Oracle `DATE`,
 | Classification | POC |
 | Scale | Small |
 | Budget | Cost-optimized |
-| Subscription | Not applicable in this run; Azure deployment explicitly skipped by the user |
-| Location | Not applicable in this run; Azure deployment explicitly skipped by the user |
+| Subscription | MCAPS-Hybrid-REQ-146724-2026-sralaval (`b2103af5-569d-4cb7-92e0-f0daf35d6d61`) |
+| Location | Central US (`centralus`) |
 | Compliance | Synthetic demo data only; no customer or production data |
 | Source | Oracle Database Free container for local demonstration |
 | Target | Azure SQL Database using Microsoft Entra authentication |
@@ -101,8 +101,8 @@ locally so it can connect to both the Oracle source and Azure SQL target.
 - Azure access uses `DefaultAzureCredential` and an ODBC access token.
 - TLS 1.2 is required for Azure SQL.
 - Profiler and validation SQL identifiers are validated before query execution.
-- Public network access is disabled by default in the optional Bicep. A
-  caller-supplied IP firewall rule is required for a local demo connection.
+- Public network access is disabled by policy and by Bicep. SSMA requires an
+  approved private network path to this target.
 
 ### Research references
 
@@ -115,16 +115,23 @@ locally so it can connect to both the Oracle source and Azure SQL target.
 
 ## 6. Provisioning Limit Checklist
 
-Azure deployment was explicitly skipped. No resources will be provisioned in
-this run, so quota and capacity checks are not applicable.
+The Microsoft SQL provider was registered before deployment. `az quota list`
+returned `BadRequest` for `Microsoft.Sql`, so capacity was validated using live
+subscription inventory and Microsoft's published Azure SQL limits.
 
-| Resource type | Number deployed now | Limit/quota | Notes |
-|---------------|---------------------|-------------|-------|
-| `Microsoft.Sql/servers` | 0 | Not applicable | Optional Bicep artifact only |
-| `Microsoft.Sql/servers/databases` | 0 | Not applicable | Optional Bicep artifact only |
-| `Microsoft.Sql/servers/firewallRules` | 0 | Not applicable | Optional, explicit client IP only |
+| Resource type | Number to deploy | Total after deployment | Limit/quota | Notes |
+|---------------|------------------|------------------------|-------------|-------|
+| `Microsoft.Sql/servers` | 1 | 1 in Central US | 250 per subscription per region | Live inventory: 0; limit from Microsoft Learn |
+| `Microsoft.Sql/servers/databases` | 1 | 1 on the new server | 5,000 per logical server | Live inventory: 0; limit from Microsoft Learn |
+| `Microsoft.Sql/servers/firewallRules` | 0 | 0 | Service configuration | Prohibited by MCAPS governance policy |
 
-**Status:** No provisioning requested
+**Status:** All resources within limits
+
+### Policy constraints
+
+MCAPS governance policy `AzureSQL_PublicNetwork_Modify` enforces disabled public
+network access. The template now matches that requirement and does not create
+firewall rules. Three Defender for Cloud assignments also apply.
 
 ---
 
@@ -176,7 +183,10 @@ this run, so quota and capacity checks are not applicable.
 
 ### Phase 4: Deployment
 
-- [ ] Deferred by user; do not provision Azure resources
+- [x] Run deployment-specific provision preview
+- [x] Provision Azure SQL infrastructure
+- [x] Verify logical server, database, private network state, and Entra administrator
+- [x] Record resource names and portal links
 
 ---
 
@@ -195,12 +205,16 @@ This section will be populated by `azure-validate`.
 | AZD package | `azd package --no-prompt` | Pass | 2026-08-31 |
 | Secret/property scan | `rg` over source and Bicep | Pass | 2026-08-31 |
 | Static role review | Review `infra/` for role assignments | Pass; no workload identity or RBAC assignment required | 2026-08-31 |
+| Central US preview | `azd provision --preview --no-prompt` | Pass | 2026-08-31 |
+| Azure provisioning | `azd provision --no-prompt` | Pass | 2026-08-31 |
+| Live SQL state | `az sql server show` and `az sql db show` | Server Ready; database Online | 2026-08-31 |
+| Network policy | `az sql server show` and firewall list | Public access disabled; no firewall rules | 2026-08-31 |
+| Live role review | Inspect deployed identities and Entra administrator | No app identity; Entra-only administrator confirmed | 2026-08-31 |
 | Oracle runtime | `docker compose up -d --wait` | Blocked: Docker Desktop engine inactive | 2026-08-31 |
 
 **Validated by:** azure-validate skill
-**Validation scope:** Source, package, Compose model, AZD configuration, and
-Bicep static validation. Live Azure policy and provisioning checks were excluded
-because the user explicitly skipped deployment.
+**Validation scope:** Source, package, Compose model, AZD configuration, Bicep,
+live Azure policy inventory, provider readiness, and deployment capacity.
 
 ---
 
@@ -231,8 +245,47 @@ because the user explicitly skipped deployment.
 - **Assessment utility:** Tested locally
 - **SSMA desktop flow:** Documented; requires interactive SSMA installation
 - **Oracle source runtime:** Blocked because Docker Desktop was not running
-- **Azure SQL target:** Not deployed at user request
+- **Azure SQL target:** Deployed and control-plane verified
+- **Azure SQL data-plane:** Requires an approved private network path
 
 ## 11. Next Step
 
-Run the `azure-validate` skill, then publish the validated repository.
+Configure an approved private network path before connecting SSMA to Azure SQL.
+
+## 12. Deployment Verification
+
+| Property | Value |
+|----------|-------|
+| Subscription | `MCAPS-Hybrid-REQ-146724-2026-sralaval` |
+| Region | Central US |
+| Resource group | `rg-oracle-sql-demo-cu-rwackb` |
+| SQL logical server | `sql-oracle-sql-demo-cu-rwackb` |
+| SQL FQDN | `sql-oracle-sql-demo-cu-rwackb.database.windows.net` |
+| Database | `oracle-migration-demo` |
+| SKU | Basic, 2 GB |
+| Authentication | Microsoft Entra only |
+| Entra administrator | Srini Alavala |
+| Public network access | Disabled |
+| Firewall rules | None |
+| Deployment state | Succeeded |
+
+**Azure portal:** https://portal.azure.com/#@/resource/subscriptions/b2103af5-569d-4cb7-92e0-f0daf35d6d61/resourceGroups/rg-oracle-sql-demo-cu-rwackb/overview
+
+### Deployment recovery history
+
+- East US 2 rejected new SQL logical-server provisioning with
+  `RegionDoesNotAllowProvisioning`; the user approved Central US.
+- The first Central US run created the server and database, but MCAPS policy
+  `AzureSQL_PublicNetwork_Modify` disabled public access and rejected the
+  firewall child.
+- The user approved private-only deployment. The Bicep was updated to match
+  policy, and the final idempotent deployment succeeded.
+- The empty East US 2 resource group was retained because deletion was not
+  authorized.
+
+### Live role verification
+
+No managed application identity is deployed. The logical server's Microsoft
+Entra-only administrator is `Srini Alavala`
+(`a5963a34-ae06-4981-994d-93b65b2f34ff`). No workload RBAC assignments are
+required by this infrastructure-only demo.

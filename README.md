@@ -40,8 +40,9 @@ flowchart LR
 - [SSMA for Oracle](https://aka.ms/ssmafororacle).
 - A supported Oracle client/provider required by your SSMA version.
 - ODBC Driver 18 for SQL Server for the optional validation CLI.
-- An existing Azure SQL Database. Optional Entra-only Bicep is included under
-  `infra/`, but provisioning is intentionally not part of this run.
+- An existing Azure SQL Database reachable from the SSMA workstation. The
+  included Entra-only Bicep creates a private-only target; use an approved
+  private endpoint, VPN, or network security perimeter path to reach it.
 
 Run the local prerequisite check:
 
@@ -257,18 +258,16 @@ removes all local demo data and forces a clean initialization next time.
 ## Optional Azure SQL provisioning
 
 The Bicep creates a Basic 2-GB database with Entra-only authentication, TLS 1.2,
-and no public endpoint unless one explicit client IP is supplied. Deployment
-was intentionally skipped for this task.
+and public network access disabled. Deploy SSMA or provide a private endpoint
+inside an approved private network before attempting migration.
 
 ```powershell
 $principal = az ad signed-in-user show --query "{id:id,name:displayName}" |
     ConvertFrom-Json
-$clientIp = (Invoke-RestMethod https://api.ipify.org)
 
 azd env new oracle-sql-demo
 azd env set AZURE_PRINCIPAL_ID $principal.id
 azd env set AZURE_PRINCIPAL_NAME $principal.name
-azd env set AZURE_CLIENT_IP $clientIp
 azd provision
 ```
 
