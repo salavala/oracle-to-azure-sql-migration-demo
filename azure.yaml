@@ -1,0 +1,4 @@
+name: oracle-to-azure-sql-migration-demo
+metadata:
+  template: oracle-to-azure-sql-migration-demo@1.0.0
+

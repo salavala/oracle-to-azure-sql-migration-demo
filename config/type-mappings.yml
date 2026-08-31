@@ -1,0 +1,27 @@
+version: 1
+
+defaults:
+  date:
+    target_type: datetime2(0)
+    transform: preserve
+  unconstrained_number:
+    target_type: decimal(38,10)
+    transform: decimal
+  char:
+    target_type: char({length})
+    transform: preserve
+
+overrides:
+  MIGRATION_DEMO.SALES_ORDERS.SHIP_DATE:
+    target_type: date
+    transform: date_only
+    reason: The target business process stores only the shipment calendar date.
+  MIGRATION_DEMO.SALES_ORDERS.LEGACY_REFERENCE:
+    target_type: varchar(12)
+    transform: trim_right
+    reason: Remove Oracle CHAR padding before loading a variable-length key.
+  MIGRATION_DEMO.SALES_ORDERS.UNBOUNDED_SCORE:
+    target_type: decimal(20,6)
+    transform: decimal
+    reason: A profiling decision established the required precision and scale.
+

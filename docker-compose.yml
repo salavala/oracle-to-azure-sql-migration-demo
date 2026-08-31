@@ -1,0 +1,27 @@
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: oracle-migration-demo
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_SYSTEM_PASSWORD:?Set ORACLE_SYSTEM_PASSWORD in .env}
+      APP_USER: ${ORACLE_USER:-migration_demo}
+      APP_USER_PASSWORD: ${ORACLE_PASSWORD:?Set ORACLE_PASSWORD in .env}
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./oracle/01_create_demo.sql:/container-entrypoint-initdb.d/setup/01_create_demo.sql:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+
+volumes:
+  oracle-data:
+

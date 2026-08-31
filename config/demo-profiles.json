@@ -1,0 +1,69 @@
+{
+  "ORDER_ID": {
+    "non_null_count": 4,
+    "min_value": "100000000001",
+    "max_value": "100000000004",
+    "fractional_count": 0
+  },
+  "CUSTOMER_ID": {
+    "non_null_count": 4,
+    "min_value": "2000000001",
+    "max_value": "2147483647",
+    "fractional_count": 0
+  },
+  "ORDER_DATE": {
+    "non_null_count": 4,
+    "min_value": "1900-01-01 00:00:00",
+    "max_value": "2026-08-24 14:05:07",
+    "time_value_count": 3
+  },
+  "SHIP_DATE": {
+    "non_null_count": 3,
+    "min_value": "1900-01-02 12:30:00",
+    "max_value": "2026-07-10 00:00:00",
+    "time_value_count": 2
+  },
+  "GROSS_AMOUNT": {
+    "non_null_count": 4,
+    "min_value": "-42.10",
+    "max_value": "9999999999999.99",
+    "fractional_count": 4
+  },
+  "DISCOUNT_RATE": {
+    "non_null_count": 4,
+    "min_value": "0",
+    "max_value": "0.9999",
+    "fractional_count": 3
+  },
+  "QUANTITY": {
+    "non_null_count": 4,
+    "min_value": "1",
+    "max_value": "99999",
+    "fractional_count": 0
+  },
+  "STATUS_CODE": {
+    "non_null_count": 4,
+    "padded_value_count": 0,
+    "max_trimmed_length": 1
+  },
+  "COUNTRY_CODE": {
+    "non_null_count": 4,
+    "padded_value_count": 0,
+    "max_trimmed_length": 2
+  },
+  "LEGACY_REFERENCE": {
+    "non_null_count": 4,
+    "padded_value_count": 4,
+    "max_trimmed_length": 11
+  },
+  "UNBOUNDED_SCORE": {
+    "non_null_count": 3,
+    "min_value": "-123456.654321",
+    "max_value": "98.765432",
+    "fractional_count": 3
+  },
+  "DESCRIPTION": {
+    "non_null_count": 4,
+    "max_trimmed_length": 68
+  }
+}

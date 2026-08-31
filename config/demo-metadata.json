@@ -1,0 +1,15 @@
+[
+  {"name": "ORDER_ID", "data_type": "NUMBER", "precision": 12, "scale": 0, "nullable": false},
+  {"name": "CUSTOMER_ID", "data_type": "NUMBER", "precision": 10, "scale": 0, "nullable": false},
+  {"name": "ORDER_DATE", "data_type": "DATE", "nullable": false},
+  {"name": "SHIP_DATE", "data_type": "DATE", "nullable": true},
+  {"name": "GROSS_AMOUNT", "data_type": "NUMBER", "precision": 15, "scale": 2, "nullable": false},
+  {"name": "DISCOUNT_RATE", "data_type": "NUMBER", "precision": 5, "scale": 4, "nullable": false},
+  {"name": "QUANTITY", "data_type": "NUMBER", "precision": 5, "scale": 0, "nullable": false},
+  {"name": "STATUS_CODE", "data_type": "CHAR", "length": 1, "nullable": false},
+  {"name": "COUNTRY_CODE", "data_type": "CHAR", "length": 2, "nullable": false},
+  {"name": "LEGACY_REFERENCE", "data_type": "CHAR", "length": 12, "nullable": false},
+  {"name": "UNBOUNDED_SCORE", "data_type": "NUMBER", "nullable": true},
+  {"name": "DESCRIPTION", "data_type": "VARCHAR2", "length": 100, "nullable": true}
+]
+
