@@ -148,9 +148,15 @@ container and is not required when SSMA can connect successfully.
 
 ### 6. Run the custom mapping assessment
 
+SSMA may remain open. In PowerShell, from the repository root, run:
+
 ```powershell
 .\scripts\run-custom-assessment.ps1
 ```
+
+The script uses `.venv\Scripts\python.exe` directly, so activating the virtual
+environment again is not required. If `.venv` does not exist, complete Step 2
+once before running the assessment.
 
 Open `reports/custom-mapping-assessment.md`.
 
