@@ -119,7 +119,10 @@ and database creation can take several minutes.
 
 1. Open SSMA for Oracle.
 2. Create a project with **Azure SQL Database** as the target.
-3. Connect to `localhost:1521/FREEPDB1`.
+3. Copy `oracle/tnsnames.ora.example` into the Oracle client's
+   `network/admin/tnsnames.ora` file. In SSMA choose **TNSNAME** mode and use
+   connect identifier `FREEPDB1_DEMO`. Do not enter `FREEPDB1` in the
+   **Oracle SID** field; it is a service name, not a SID.
 4. Select `MIGRATION_DEMO`.
 5. Right-click the schema and select **Create Report**.
 6. Review and save the HTML report.
@@ -130,6 +133,15 @@ profiling alone cannot find.
 
 **Expected:** The report inventories `MIGRATION_DEMO.SALES_ORDERS` and shows its
 conversion status.
+
+Verify the alias before opening SSMA:
+
+```powershell
+tnsping FREEPDB1_DEMO
+sqlplus migration_demo@FREEPDB1_DEMO
+```
+
+`sqlplus` prompts for the password stored as `ORACLE_PASSWORD` in `.env`.
 
 ### 6. Run the custom mapping assessment
 
