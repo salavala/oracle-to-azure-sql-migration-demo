@@ -133,14 +133,18 @@ profiling alone cannot find.
 **Expected:** The report inventories `MIGRATION_DEMO.SALES_ORDERS` and shows its
 conversion status.
 
-Verify the alias before opening SSMA:
+Before opening SSMA, verify that the TNS configuration exists and that the
+Oracle listener is reachable:
 
 ```powershell
-tnsping FREEPDB1_DEMO
-sqlplus migration_demo@FREEPDB1_DEMO
+Test-Path "$env:TNS_ADMIN\tnsnames.ora"
+Select-String -Path "$env:TNS_ADMIN\tnsnames.ora" -Pattern '^FREEPDB1_DEMO'
+Test-NetConnection 127.0.0.1 -Port 1521
 ```
 
-`sqlplus` prompts for the password stored as `ORACLE_PASSWORD` in `.env`.
+`Test-Path` and `TcpTestSucceeded` should return `True`. `tnsping` is an
+optional Oracle Client utility; it is not installed by SSMA or the Docker
+container and is not required when SSMA can connect successfully.
 
 ### 6. Run the custom mapping assessment
 
