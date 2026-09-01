@@ -119,10 +119,9 @@ and database creation can take several minutes.
 
 1. Open SSMA for Oracle.
 2. Create a project with **Azure SQL Database** as the target.
-3. Copy `oracle/tnsnames.ora.example` into the Oracle client's
-   `network/admin/tnsnames.ora` file. In SSMA choose **TNSNAME** mode and use
-   connect identifier `FREEPDB1_DEMO`. Do not enter `FREEPDB1` in the
-   **Oracle SID** field; it is a service name, not a SID.
+3. Run `.\scripts\configure-tns.ps1`, then fully close and reopen SSMA. Choose
+   **TNSNAME** mode and use connect identifier `FREEPDB1_DEMO`. Do not enter
+   `FREEPDB1` in the **Oracle SID** field; it is a service name, not a SID.
 4. Select `MIGRATION_DEMO`.
 5. Right-click the schema and select **Create Report**.
 6. Review and save the HTML report.

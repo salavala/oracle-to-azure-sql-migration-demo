@@ -29,11 +29,10 @@ exception, edit the converted target column before synchronization.
    Oracle client/provider.
 2. Select **File > New Project**, choose **Azure SQL Database** as the target,
    and name the project `OracleAzureSqlTypeMappingDemo`.
-3. Copy `oracle/tnsnames.ora.example` into the Oracle client's active
-   `network/admin/tnsnames.ora`. Select **Connect to Oracle**, choose
-   **TNSNAME** mode, and use connect identifier `FREEPDB1_DEMO` with the local
-   demo user. SSMA Standard mode accepts an Oracle SID; do not place the
-   `freepdb1` service name in its SID field.
+3. Run `.\scripts\configure-tns.ps1`, then fully close and reopen SSMA. Select
+   **Connect to Oracle**, choose **TNSNAME** mode, and use connect identifier
+   `FREEPDB1_DEMO` with the local demo user. SSMA Standard mode accepts an
+   Oracle SID; do not place the `freepdb1` service name in its SID field.
 4. Select `MIGRATION_DEMO` in Oracle Metadata Explorer.
 5. Right-click the schema and choose **Create Report**. Save and review the HTML
    assessment, especially warnings for tables and data types.
